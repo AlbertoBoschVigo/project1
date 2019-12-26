@@ -37,7 +37,7 @@ API_KEY = 'tNQIRdLGEby2aHaiZXtgQ'
 #print(res.json())
 paginaActual = ''
 
-def generarTabla(modo = 'index', filas = 4):
+def generarTabla(modo = 'index', filas = 12):
     if modo == 'index':
         query = f"select *  from libros limit { filas };"
     else:
@@ -75,7 +75,7 @@ def contenido(categoria):
     resultado = generarTabla(modo = categoria, filas = 10)
     if categoria not in listaCategorias:
         return render_template('default_error.html', headline = f'La categoria "{ categoria } no existe')
-    return render_template('contenido.html', headline = f'Libros de { categoria }', listaCategorias = listaCategorias, resultado = resultado)
+    return render_template('contenido.html', headline = categoria, listaCategorias = listaCategorias, resultado = resultado)
 
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
@@ -83,11 +83,7 @@ def login():
         session['logueado'] = False
     if request.method == 'POST':
         data = request.json
-        if 'inputEmail' in request.form and 'inputPassword' in request.form:
-            print('estan')
-            print(request.form['inputEmail'])
-            print(request.form['inputPassword'])
-            
+        if 'inputEmail' in request.form and 'inputPassword' in request.form:            
             session['user_id'] = request.form['inputEmail']
             session['user_pass'] = request.form['inputPassword']
         #request.method == 'GET'

@@ -5,11 +5,11 @@
 {% endblock headingA %}
 
 {% block navegacion %}
-    <ul>
+    <div class="list-group">
         {% for categoria in listaCategorias %}
-            <li><a href = "{{ url_for('contenido', categoria = categoria) }}">{{ categoria }}</a></li>
+            <a href = "{{ url_for('contenido', categoria = categoria) }}" class="list-group-item list-group-item-action list-group-item-primary">{{ categoria }}</a>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock navegacion %}
 
 {% block headingM %}
@@ -29,8 +29,8 @@
 {% endblock tabla %}
 
 {% block body %}
-    <p>Estamos muy contentos de que hayas venido a mi pagina, mola mazo.</p>
-    <p> Aqui no tengo aboslutamente nada que poner, vaya movida</p>
+    <p>Aqui puedes ver algunos de los titulos disponibles.</p>
+    <p>Animate a buscar, hay multiples opciones.</p>
 {% endblock body %}
 
 {% block leftContent %}

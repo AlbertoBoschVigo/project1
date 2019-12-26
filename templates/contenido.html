@@ -1,16 +1,20 @@
 {% extends 'plantilla.html' %}
 {% block headingA %}
-    {{ headline }}
+    Libros de {{ headline }}
 {% endblock headingA %}
 
 
 {% block navegacion %}
-    <ul>
-        {% for categoria in listaCategorias %}
-            <li><a href = "{{ url_for('contenido', categoria = categoria) }}">{{ categoria }}</a></li>
-        {% endfor %}
-        <li><a href="{{ url_for('index') }}">Ir al inicio</a></li>
-    </ul>
+    <div class="list-group">
+            {% for categoria in listaCategorias %}
+                {% if categoria == headline %}
+                    <a href = "{{ url_for('contenido', categoria = categoria) }}" class="list-group-item list-group-item-action list-group-item-success">{{ categoria }}</a>
+                {% else %}
+                    <a href = "{{ url_for('contenido', categoria = categoria) }}" class="list-group-item list-group-item-action list-group-item-secondary">{{ categoria }}</a>
+                {% endif %}    
+            {% endfor %}
+            <a href="{{ url_for('index') }}" class="list-group-item list-group-item-action list-group-item-secondary">Ir al inicio</a></li>
+    </div>
     
 {% endblock navegacion %}
 
