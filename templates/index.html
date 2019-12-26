@@ -1,0 +1,46 @@
+
+{% extends 'plantilla.html' %}
+{% block headingA %}
+    {{ headline }}
+{% endblock headingA %}
+
+{% block navegacion %}
+    <ul>
+        {% for categoria in listaCategorias %}
+            <li><a href = "{{ url_for('contenido', categoria = categoria) }}">{{ categoria }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock navegacion %}
+
+{% block headingM %}
+    {{ headline }}
+{% endblock headingM %}
+
+{% block tabla %}
+    {% for linea in resultado %}
+        <tr>
+            <th scope="row">{{ linea[1] }}</th>
+            <td>{{ linea[2] }}</td>
+            <td>{{ linea[3] }}</td>
+            <td>{{ linea[5] }}</td>
+        </tr>
+    {% endfor %}
+
+{% endblock tabla %}
+
+{% block body %}
+    <p>Estamos muy contentos de que hayas venido a mi pagina, mola mazo.</p>
+    <p> Aqui no tengo aboslutamente nada que poner, vaya movida</p>
+{% endblock body %}
+
+{% block leftContent %}
+    {% if estadoLogin %}
+        <div class="card-body">
+            <h5 class="card-title">Bienvenido {{ estadoLogin }}</h5>
+            <p class="card-text">Esperamos que disfrutes de tu experiencia en nuestra pagina.</p>
+            <a href="{{ url_for('logout') }}" class="btn btn-primary stretched-link">No eres Tu? Sal de aqui</a>
+      </div>  
+    {% else %}
+        {% include 'miniLogin.html' %}
+    {% endif %}
+{% endblock leftContent %}
