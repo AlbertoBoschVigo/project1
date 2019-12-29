@@ -8,12 +8,12 @@
     <div class="list-group">
             {% for categoria in listaCategorias %}
                 {% if categoria == headline %}
-                    <a href = "{{ url_for('contenido', categoria = categoria) }}" class="list-group-item list-group-item-action list-group-item-success">{{ categoria }}</a>
+                    <a href = "{{ url_for('contenido', categoria = categoria) }}" class="list-group-item list-group-item-action list-group-item-primary">{{ categoria }}</a>
                 {% else %}
                     <a href = "{{ url_for('contenido', categoria = categoria) }}" class="list-group-item list-group-item-action list-group-item-secondary">{{ categoria }}</a>
                 {% endif %}    
             {% endfor %}
-            <a href="{{ url_for('index') }}" class="list-group-item list-group-item-action list-group-item-secondary">Ir al inicio</a></li>
+            <a href="{{ url_for('index') }}" class="list-group-item list-group-item-action list-group-item-secondary">Todas</a></li>
     </div>
     
 {% endblock navegacion %}
@@ -35,5 +35,20 @@
 {% endblock tabla %}
 
 {% block body %}
-<p> Aqui tendria que poner toda la charanga</p>
+<p> Aqui puedes ver resultados de la categoria {{ headline }}</p>
 {% endblock body %}
+
+{% block leftContent %}
+    {% if estadoLogin %}
+        <div class="card" style="font-size: 0.8rem;">
+            <div class="card-body">
+                <h5 class="card-title">Bienvenido {{ estadoLogin }}</h5>
+                
+                <p class="card-text">Esperamos que disfrutes de tu experiencia en nuestra pagina.</p>
+                <a href="{{ url_for('logout') }}" class="btn btn-primary stretched-link">No eres Tu? Sal de aqui</a>
+            </div>
+        </div> 
+    {% else %}
+        {% include 'miniLogin.html' %}
+    {% endif %}
+{% endblock leftContent %}

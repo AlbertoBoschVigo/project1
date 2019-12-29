@@ -14,16 +14,13 @@ ul {
 a {
   color: #272727;
 }
-#pieDerecho{
+li, td{
+  font-size: 1.2rem;
+}
+.pieDerecho{
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 150px;
-  border: 2px solid rgb(43, 39, 26);
-  border-radius: 10px;
-  padding: 5px;
-  text-align: center;
-  font-size: 9px;
 }
 
 .card-signin {
@@ -33,13 +30,13 @@ a {
 }
 
 .card-signin .card-title {
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
   font-weight: 300;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .card-signin .card-body {
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .form-signin {

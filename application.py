@@ -35,13 +35,20 @@ for i in resultado:
 API_KEY = 'tNQIRdLGEby2aHaiZXtgQ'
 #res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": API_KEY, "isbns": "9781632168146"})
 #print(res.json())
-paginaActual = ''
 
-def generarTabla(modo = 'index', filas = 12):
+
+def generarTabla(modo = 'index', filas = 12, buscar = False , columna = 'title'):
     if modo == 'index':
-        query = f"select *  from libros limit { filas };"
+        if buscar:
+            query = f"select *  from libros where { columna } LIKE '%{ buscar }%' limit { filas };"
+        else:
+            query = f"select *  from libros limit { filas };"
     else:
-        query = f"select * from libros where categoria like '{ modo }' limit { filas };"
+        if buscar:
+            query = f"select *  from libros where categoria like '{ modo }' and { columna } LIKE '%{ buscar }%' limit { filas };"
+        else:
+            query = f"select * from libros where categoria like '{ modo }' limit { filas };"
+
     #print(query)
     resultado = conexion.consulta(query)
     #print(resultado)
@@ -53,36 +60,48 @@ def comprobarUsuario():
     resultado = conexion.consulta(query)
     if resultado and session['user_id'] == resultado[0][1] and session['user_pass'] == resultado[0][2]:
         session['logueado'] = True
+    else:
+        session['logueado'] = False
+        session['user_id'] = False
+
+def gestionSesion(pagina):
+    if session.get('logueado') is None:
+        session['logueado'] = False
+        session['user_id'] = False
+    session['paginaActual']= pagina
+    if pagina == 'index':
+        session.pop('categoria', None)
+    
 
 @app.route("/", methods = ['GET', 'POST'])
 def index():
-    paginaActual = 'index'
-    if session.get('logueado') is None:
-        session['logueado'] = False
-    resultado = generarTabla()
-    if session['logueado']:
-        estadoLogin = session['user_id']
+    gestionSesion('index')
+    if session.get('cadenaBusqueda') is None:
+        resultado = generarTabla()
     else:
-        estadoLogin = False
-    return render_template('index.html', headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = estadoLogin)
+        resultado = generarTabla(modo = 'index', filas = 5, buscar = session['cadenaBusqueda'], columna = session['eleccion'])
+        session.pop('cadenaBusqueda', None)
+    return render_template('index.html', headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'])
 
 @app.route("/<string:categoria>")
 def contenido(categoria):
-    paginaActual = categoria
-    if session.get('logueado') is None:
-        session['logueado'] = False
-    
-    resultado = generarTabla(modo = categoria, filas = 10)
+    gestionSesion('contenido')
+    if session.get('cadenaBusqueda') is None:
+        resultado = generarTabla(modo = categoria, filas = 10)
+    else:
+        resultado = generarTabla(modo = categoria, filas = 10, buscar = session['cadenaBusqueda'], columna = session['eleccion'])
     if categoria not in listaCategorias:
         return render_template('default_error.html', headline = f'La categoria "{ categoria } no existe')
-    return render_template('contenido.html', headline = categoria, listaCategorias = listaCategorias, resultado = resultado)
+        session.pop('cadenaBusqueda', None)
+    session['categoria'] = categoria
+    return render_template('contenido.html', headline = categoria, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'])
 
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
+    session['paginaActual']= 'login'
     if session.get('logueado') is None:
         session['logueado'] = False
     if request.method == 'POST':
-        data = request.json
         if 'inputEmail' in request.form and 'inputPassword' in request.form:            
             session['user_id'] = request.form['inputEmail']
             session['user_pass'] = request.form['inputPassword']
@@ -91,21 +110,27 @@ def login():
         return redirect(url_for('index')) 
         #resultado = generarTabla()
         #return render_template('index.html', headline = headline, listaCategorias = listaCategorias, resultado = resultado)
-
     else:
-        paginaActual = 'login'
         if session['logueado']:
            return redirect(url_for('index'))  
         return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    print('pre')
-    for key, value in session.items():
-        print(key,value)
     session.clear()
-    print('post')
-    for key, value in session.items():
-        print(key,value)
     return redirect(url_for('index'))
 
+@app.route('/buscar', methods = ['POST'])
+def buscar():
+    #print(session['paginaActual'])
+    if 'inputBuscar' in request.form: 
+        eleccion = request.form['inlineRadioOptions']
+        #print(eleccion)
+        session['eleccion'] = eleccion
+        cadena = request.form['inputBuscar']
+        #print(cadena)
+        session['cadenaBusqueda'] = cadena
+        if session['paginaActual'] == 'index':
+            return redirect(url_for(session['paginaActual']))
+        else:
+            return redirect(url_for('contenido', categoria = session['categoria']))
