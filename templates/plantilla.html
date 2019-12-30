@@ -76,26 +76,9 @@
                     <h1>
                         {% block headingM %}{% endblock headingM %}
                     </h1>
-                    <div>
-                        <table class="table table-hover">
-                            <thead class="thead-dark">
-                              <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Titulo</th>
-                                <th scope="col">Autor</th>
-                                <th scope="col">Categoria</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                                {% block tabla %}
-                                {% endblock tabla %}
-                            </tbody>
-                          </table>
-                        {% block body %}
-                        {% endblock body %}
-
-                    </div>
-                
+                       
+                    {% block body %}
+                    {% endblock body %}
 
                     
                 </main>

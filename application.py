@@ -43,13 +43,15 @@ def generarTabla(modo = 'index', filas = 12, buscar = False , columna = 'title')
             query = f"select *  from libros where { columna } LIKE '%{ buscar }%' limit { filas };"
         else:
             query = f"select *  from libros limit { filas };"
+    elif modo == 'isbn':
+        query = f"select * from libros where isbn = '{ buscar }' limit { filas };"
     else:
         if buscar:
             query = f"select *  from libros where categoria like '{ modo }' and { columna } LIKE '%{ buscar }%' limit { filas };"
         else:
             query = f"select * from libros where categoria like '{ modo }' limit { filas };"
 
-    #print(query)
+    print(query)
     resultado = conexion.consulta(query)
     #print(resultado)
     return resultado
@@ -105,11 +107,8 @@ def login():
         if 'inputEmail' in request.form and 'inputPassword' in request.form:            
             session['user_id'] = request.form['inputEmail']
             session['user_pass'] = request.form['inputPassword']
-        #request.method == 'GET'
         comprobarUsuario()
         return redirect(url_for('index')) 
-        #resultado = generarTabla()
-        #return render_template('index.html', headline = headline, listaCategorias = listaCategorias, resultado = resultado)
     else:
         if session['logueado']:
            return redirect(url_for('index'))  
@@ -119,6 +118,17 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+@app.route('/detalle/<string:isbn>')
+def detalle(isbn):
+    if not session['logueado']:
+        return render_template('default_error.html', headline = 'Acceso no autorizado')
+    else:
+        resultado = generarTabla('isbn', 1, isbn)
+        print(resultado[0])
+        resultado = resultado[0]
+        return render_template('detalle.html', isbn = isbn, headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'])
+
 
 @app.route('/buscar', methods = ['POST'])
 def buscar():
