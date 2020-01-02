@@ -1,0 +1,27 @@
+<div class="card card-signin my-3" style="font-size: 0.8rem;">
+    <div class="card-body">
+        <h6 class="card-title text-center">Busqueda</h6>
+        <form class="form-signin" action = "{{ url_for('buscar') }}" method="post">
+            <fieldset class="form-group">
+                <div class="form-label-group">
+                    <input type="text" id="inputBuscar" name="inputBuscar" class="form-control" placeholder="Buscar" required>
+                    <label for="inputBuscar">Buscar</label>
+                </div>
+            
+                <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="isbn">
+                <label class="form-check-label" for="inlineRadio1">ISBN</label>
+                </div>
+                <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="author">
+                <label class="form-check-label" for="inlineRadio2">Autor</label>
+                </div>
+                <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="title" checked>
+                <label class="form-check-label" for="inlineRadio3">Titulo</label>
+                </div>
+            </fieldset>
+            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Buscar</button>
+        </form>
+    </div>
+</div>

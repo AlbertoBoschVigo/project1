@@ -1,4 +1,4 @@
-import os
+import os, re
 import requests
 
 from flask import Flask, session, render_template, request, jsonify, redirect, url_for
@@ -33,11 +33,9 @@ listaCategorias = []
 for i in resultado:
     listaCategorias.append(i[0])
 API_KEY = 'tNQIRdLGEby2aHaiZXtgQ'
-#res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": API_KEY, "isbns": "9781632168146"})
-#print(res.json())
-
 
 def generarTabla(modo = 'index', filas = 12, buscar = False , columna = 'title'):
+    filas = 29
     if modo == 'index':
         if buscar:
             query = f"select *  from libros where { columna } LIKE '%{ buscar }%' limit { filas };"
@@ -51,7 +49,7 @@ def generarTabla(modo = 'index', filas = 12, buscar = False , columna = 'title')
         else:
             query = f"select * from libros where categoria like '{ modo }' limit { filas };"
 
-    print(query)
+    #print(query)
     resultado = conexion.consulta(query)
     #print(resultado)
     return resultado
@@ -78,12 +76,16 @@ def gestionSesion(pagina):
 @app.route("/", methods = ['GET', 'POST'])
 def index():
     gestionSesion('index')
+    numPaginas = []
     if session.get('cadenaBusqueda') is None:
         resultado = generarTabla()
+        if resultado:
+            for i in range(1,round(len(resultado)/10)):
+                numPaginas.append(i)
     else:
         resultado = generarTabla(modo = 'index', filas = 5, buscar = session['cadenaBusqueda'], columna = session['eleccion'])
         session.pop('cadenaBusqueda', None)
-    return render_template('index.html', headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'])
+    return render_template('index.html', headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'], numPaginas = numPaginas)
 
 @app.route("/<string:categoria>")
 def contenido(categoria):
@@ -124,11 +126,32 @@ def detalle(isbn):
     if not session['logueado']:
         return render_template('default_error.html', headline = 'Acceso no autorizado')
     else:
+        rating = '0'
         resultado = generarTabla('isbn', 1, isbn)
-        print(resultado[0])
-        resultado = resultado[0]
-        return render_template('detalle.html', isbn = isbn, headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'])
+        if resultado:
+            resultado = resultado[0]
+            res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": API_KEY, "isbns": "%s" % isbn})
+            if res.status_code == 200:
+                try:
+                    resultadoJson = res.json()['books'][0]
+                    rating = resultadoJson['average_rating']
+                except Exception as e:
+                    print(e)
+            """
+                {'id': 16204, 'isbn': '1592243002', 'isbn13': '9781592243006', 'ratings_count': 20497, 'reviews_count': 36044, 'text_reviews_count': 1048, 'work_ratings_count': 25450, 'work_reviews_count': 44682, 'work_text_reviews_count': 1578, 'average_rating': '3.37'}
+            """
+            return render_template('detalle.html', isbn = isbn, headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'], rating = rating)
+        else:
+            return render_template('default_error.html', headline = 'Isbn no encontrado')
 
+
+@app.route('/api/<string:isbn>')
+def api(isbn):
+    if re.search('\d{8}', isbn):
+        return render_template('default_error.html', headline = 'Isbn valido')
+    else:
+        return render_template('default_error.html', headline = 'Isbn no valido')
+    return render_template('default_error.html', headline = 'Isbn no encontrado')
 
 @app.route('/buscar', methods = ['POST'])
 def buscar():

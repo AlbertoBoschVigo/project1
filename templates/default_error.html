@@ -1,9 +1,32 @@
 {% extends 'plantilla.html' %}
+
+{% block head %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/error.css') }}">
+<!--<script type=text/javascript src="{{url_for('static', filename='js/error.js') }}"></script>-->
+{% endblock head %}
+
 {% block heading %}
     {{ headline }}
+    
 {% endblock heading %}
 
 {% block body %}
-{{ headline }}
-    <a href="{{ url_for('index') }}">Ir al inicio</a>
+
+    <!-- Error Page -->
+    <div class="error">
+        <div class="container-fluid">
+            <div class="col-xs-12 ground-color text-center">
+                <div class="container-error-404">
+                    <div class="clip"><div class="shadow"><span class="digit thirdDigit">4</span></div></div>
+                    <div class="clip"><div class="shadow"><span class="digit secondDigit">0</span></div></div>
+                    <div class="clip"><div class="shadow"><span class="digit firstDigit">4</span></div></div>
+                    <div class="msg">OH!<span class="triangle"></span></div>
+                </div>
+                <h2 class="h1">{{ headline }}</h2>
+                <a href="{{ url_for('index') }}"><h2 class="h1">Ir al inicio</h2></a>
+            </div>
+        </div>
+    </div>
+    <!-- Error Page -->
+    
 {% endblock body %}
