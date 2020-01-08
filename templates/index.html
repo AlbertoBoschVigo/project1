@@ -1,91 +1,23 @@
-
 {% extends 'plantilla.html' %}
+{% block head %}
+<script>
+    function enviar() {
+        const request = new XMLHttpRequest();
+        const email = document.querySelector('#inputEmail').value;
+        const userPassword = document.querySelector('#inputPassword').value;
+        request.open('POST', `/login`);
+        const data = new FormData();
+        data.append('email', email);
+        data.append('userPassword', userPassword);
+
+        // Send request
+        request.send(data);
+        location.reload();
+    };
+</script>
+{% endblock head %}
 {% block headingA %}
     {{ headline }}
-    <script>
-        var counter = 1
-        var paginaActual = 1
-        var finTr = paginaActual * 10; //tiene que ser menor igual que fin
-        var inicioTr = finTr - 10; //tiene que se maryo que inicio
- 
-        document.addEventListener('DOMContentLoaded', function (){
-            document.querySelectorAll('.filas').forEach(function(fila) {
-                console.log(fila)
-                if(counter > inicioTr && counter <= finTr){
-                    console.log('Aquiif');
-                    var hijos = fila.children;
-                    console.log(hijos)
-                    for (i = 0; i < hijos.length; i++) {
-                        console.log('block');
-                        console.log(hijo[i]);
-                        hijo[i].style.display = 'block';
-                    }
-                }
-                else{
-                    console.log('Aquielse');
-                    fila.querySelectorAll('*').forEach(function(item){
-                        console.log(item);
-                        console.log('none')
-                        item.style.display = 'none';
-                    });
-                }
-                counter += 1;
-                });
-        });
-       
-        function esconderMostrarHijos(item, modo){
-            console.log('esconderMostrarHijos');
-            console.log(item);
-            var hijos = item.children
-            console.log(hijos);
-            for(var i=0; i<hijos.length(); i++){
-                esconderMostrarHijos(hijos[i], modo);
-            }
-            item.style.display = modo;
-        };
-
-        function funcPaginar(objetctA) {
-            var aux = objetctA.innerHTML;
-            if (aux == "Previous"){
-                if (paginaActual > 1){
-                    paginaActual -= 1;
-                }
-            }
-            else if (aux == "Next"){
-                paginaActual += 1;
-            }
-            else{
-                paginaActual = aux;
-            }
-            counter = 1
-            document.querySelectorAll('.page-item').forEach(function(elemento) {
-                var hijo = elemento.children[0].innerHTML;
-                elemento.classList.remove("active");
-                if (hijo == paginaActual){
-                    finTr = paginaActual * 10;
-                    inicioTr = finTr - 10;
-                    elemento.classList.add("active");
-                    selectorVisibilidad();
-                }
-            });
-        };
-
-        function selectorVisibilidad(){
-            document.querySelectorAll('.filas').forEach(function(fila) {
-                console.log(inicioTr);
-                console.log(finTr);
-                if(counter > inicioTr && counter <= finTr){
-                    console.log('Aquiif');
-                    fila.style.display = "block";
-                }
-                else{
-                    console.log('Aquielse');
-                    fila.style.display = "none";
-                }
-                counter += 1;
-                });
-        };
-    </script>
 {% endblock headingA %}
 
 {% block navegacion %}
@@ -116,7 +48,7 @@
     </thead>
     <tbody>
         {% for linea in resultado %}
-            <div class="filas"><tr>
+            <tr>
                 {% if estadoLogin %}
                     <th scope="row"><a href="{{ url_for('detalle', isbn = linea[1]) }}"><i class="fa fa-hand-o-right"></i></a> {{ linea[1] }}</th>
                 {% else %}
@@ -125,14 +57,14 @@
                 <td>{{ linea[2] }}</td>
                 <td>{{ linea[3] }}</td>
                 <td>{{ linea[5] }}</td>
-            </tr></div>
+            </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <nav aria-label="Page navigation example">
     <ul class="pagination">
-      <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="#" onclick="funcPaginar(this)">Previous</a></li>
       {% for i in numPaginas %}
         {% if i == 1 %}
             <li class="page-item active"><a class="page-link"  href="#" onclick="funcPaginar(this)">{{ i }}</a></li>
@@ -140,7 +72,7 @@
             <li class="page-item"><a class="page-link"  href="#" onclick="funcPaginar(this)">{{ i }}</a></li>
         {% endif %}
       {% endfor %}
-      <li class="page-item"><a class="page-link"  href="#">Next</a></li>
+      <li class="page-item"><a class="page-link"  href="#" onclick="funcPaginar(this)">Next</a></li>
     </ul>
   </nav>
     

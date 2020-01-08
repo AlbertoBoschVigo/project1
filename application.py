@@ -34,8 +34,7 @@ for i in resultado:
     listaCategorias.append(i[0])
 API_KEY = 'tNQIRdLGEby2aHaiZXtgQ'
 
-def generarTabla(modo = 'index', filas = 12, buscar = False , columna = 'title'):
-    filas = 29
+def generarTabla(modo = 'index', filas = 100, buscar = False , columna = 'title'):
     if modo == 'index':
         if buscar:
             query = f"select *  from libros where { columna } LIKE '%{ buscar }%' limit { filas };"
@@ -43,6 +42,9 @@ def generarTabla(modo = 'index', filas = 12, buscar = False , columna = 'title')
             query = f"select *  from libros limit { filas };"
     elif modo == 'isbn':
         query = f"select * from libros where isbn = '{ buscar }' limit { filas };"
+
+    elif modo == 'opinion':
+        query = f"select contenido from reviews where book_id = (select id from libros where isbn = '{ buscar }');"
     else:
         if buscar:
             query = f"select *  from libros where categoria like '{ modo }' and { columna } LIKE '%{ buscar }%' limit { filas };"
@@ -71,7 +73,21 @@ def gestionSesion(pagina):
     session['paginaActual']= pagina
     if pagina == 'index':
         session.pop('categoria', None)
-    
+
+def insertarUsuario(user, passwd):
+    #insert into usuarios (usuario, password) values ('iria', '1234');
+    query = f"insert into usuarios (usuario, password) values ('{ user }', '{ passwd }');"
+    conexion.insertar(query)
+
+def insertarOpinion(isbn, usuario, opinion):
+    queryC = f"select id from libros where isbn = '{ isbn }';"
+    resultado = conexion.consulta(queryC)
+    idLibro = resultado[0][0]
+    queryC = f"select id from usuarios where usuario = '{ usuario }';"
+    resultado = conexion.consulta(queryC)
+    idUsuario = resultado[0][0]
+    queryI = f"insert into reviews (book_id, usuario_id, contenido) values ({ idLibro }, { idUsuario }, '{ opinion }');"
+    conexion.insertar(queryI)
 
 @app.route("/", methods = ['GET', 'POST'])
 def index():
@@ -109,7 +125,12 @@ def login():
         if 'inputEmail' in request.form and 'inputPassword' in request.form:            
             session['user_id'] = request.form['inputEmail']
             session['user_pass'] = request.form['inputPassword']
-        comprobarUsuario()
+            comprobarUsuario()
+        elif 'email' in request.form and 'userPassword' in request.form:
+            session['user_id'] = request.form['email']
+            session['user_pass'] = request.form['userPassword']
+            insertarUsuario(session['user_id'], session['user_pass'])
+            comprobarUsuario()
         return redirect(url_for('index')) 
     else:
         if session['logueado']:
@@ -121,29 +142,35 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-@app.route('/detalle/<string:isbn>')
+@app.route('/detalle/<string:isbn>', methods = ['GET', 'POST'])
 def detalle(isbn):
     if not session['logueado']:
         return render_template('default_error.html', headline = 'Acceso no autorizado')
     else:
-        rating = '0'
-        resultado = generarTabla('isbn', 1, isbn)
-        if resultado:
-            resultado = resultado[0]
-            res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": API_KEY, "isbns": "%s" % isbn})
-            if res.status_code == 200:
-                try:
-                    resultadoJson = res.json()['books'][0]
-                    rating = resultadoJson['average_rating']
-                except Exception as e:
-                    print(e)
-            """
-                {'id': 16204, 'isbn': '1592243002', 'isbn13': '9781592243006', 'ratings_count': 20497, 'reviews_count': 36044, 'text_reviews_count': 1048, 'work_ratings_count': 25450, 'work_reviews_count': 44682, 'work_text_reviews_count': 1578, 'average_rating': '3.37'}
-            """
-            return render_template('detalle.html', isbn = isbn, headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'], rating = rating)
-        else:
-            return render_template('default_error.html', headline = 'Isbn no encontrado')
-
+        if request.method == 'POST':
+            insertarOpinion(request.form['isbn'], session['user_id'], request.form['opinion'])
+            #return redirect(url_for('detalle', isbn = request.form['isbn']))
+        if True:
+            rating = '0'
+            #print(isbn)
+            resultado = generarTabla('isbn', 1, isbn)
+            reviews = generarTabla(modo = 'opinion', buscar = isbn)
+            #print(reviews)
+            if resultado:
+                resultado = resultado[0]
+                res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": API_KEY, "isbns": "%s" % isbn})
+                if res.status_code == 200:
+                    try:
+                        resultadoJson = res.json()['books'][0]
+                        rating = resultadoJson['average_rating']
+                    except Exception as e:
+                        print(e)
+                """
+                    {'id': 16204, 'isbn': '1592243002', 'isbn13': '9781592243006', 'ratings_count': 20497, 'reviews_count': 36044, 'text_reviews_count': 1048, 'work_ratings_count': 25450, 'work_reviews_count': 44682, 'work_text_reviews_count': 1578, 'average_rating': '3.37'}
+                """
+                return render_template('detalle.html', isbn = isbn, headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'], rating = rating, reviews = reviews)
+            else:
+                return render_template('default_error.html', headline = 'Isbn no encontrado')
 
 @app.route('/api/<string:isbn>')
 def api(isbn):

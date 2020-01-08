@@ -1,4 +1,25 @@
 {% extends 'plantilla.html' %}
+{% block head %}
+<script>
+    function enviar() {
+        const request = new XMLHttpRequest();
+        const isbn = document.querySelector('#almacenIsbn').innerHTML;
+        const opinion = document.querySelector('#message-text').value;
+        $('#exampleModal').modal('hide');
+        request.open('POST', `/detalle/${isbn}`);
+        const data = new FormData();
+        data.append('isbn', isbn);
+        data.append('opinion', opinion);
+
+        // Send request
+        request.send(data);
+        location.reload();
+    };
+    $('#exampleModal').on('shown.bs.modal', function() {
+        $('#message-text').focus();
+    });
+</script>
+{% endblock head %}
 {% block headingA %}
     {{ headline }}
 {% endblock headingA %}
@@ -25,13 +46,44 @@
 <span class="badge badge-light">Categoria</span><div>{{ resultado[5] }}</div>
 -->
 
-      <div class="card bg-light mb-3 mx-auto" id = "ficha" style="max-width: 25rem;">
-        <div class="card-header"><span class="badge badge-primary">{{ resultado[3] }}</span></div>
-        <div class="card-body">
-          <h5 class="card-title bg-success text-white">{{ resultado[2] }}</h5>
-          <p class="card-text"><span class="badge badge-info">ISBN:</span>{{ resultado[1] }} <span class="badge badge-info">Año:</span> {{ resultado[4] }} <span class="badge badge-info">Categoria:</span> {{ resultado[5] }} <span class="badge badge-info">Rating:</span> {{ rating }}</p>
+    <div class="card bg-light mb-3 mx-auto" id = "ficha" style="max-width: 25rem;">
+    <div class="card-header"><span class="badge badge-primary">{{ resultado[3] }}</span></div>
+    <div class="card-body">
+        <h5 class="card-title bg-success text-white">{{ resultado[2] }}</h5>
+        <p class="card-text"><span class="badge badge-info">ISBN:</span><span id="almacenIsbn">{{ resultado[1] }}</span> <span class="badge badge-info">Año:</span> {{ resultado[4] }} <span class="badge badge-info">Categoria:</span> {{ resultado[5] }} <span class="badge badge-info">Rating:</span> {{ rating }}</p>
+    </div>
+    </div>
+
+    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#exampleModal">Danos tu opinion.</button>
+    <ul>
+    {% for review in reviews %}
+    <li>{{ review[0] }}</li>
+    {% endfor %}
+    </ul>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nueva opinion (Máximo 255 caracteres)</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Opinion:</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary"  id="btnFormOpinion" onclick="enviar();">Guardar</button>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
 
 {% endblock body %}
 
