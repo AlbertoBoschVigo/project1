@@ -20,8 +20,10 @@
             }
         };
     };
-    $('#exampleModal').on('shown.bs.modal', function() {
-        $('#message-text').focus();
+    $(document).ready(function(){
+        $('#exampleModal').on('shown.bs.modal', function () {
+            $('#message-text').trigger('focus');
+        });
     });
 </script>
 {% endblock head %}
@@ -78,7 +80,7 @@
                     <form>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Opinion:</label>
-                        <textarea class="form-control" id="message-text"></textarea>
+                        <textarea class="form-control" id="message-text" autofocus></textarea>
                     </div>
                     </form>
                 </div>

@@ -7,6 +7,10 @@
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href='https://fonts.googleapis.com/css?family=Anton|Passion+One|PT+Sans+Caption' rel='stylesheet' type='text/css'>
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        
         {% block head %}
         {% endblock head %}
         <title>Alberto's Book Store</title>
@@ -14,8 +18,9 @@
     <body>
         <div class="container-fluid">
             <div class="row justify-content-start">
-                <aside class="col-sm-12 col-md-2 col-12">
-                    <nav class="collapse d-md-block">
+                <!--<aside class="col-sm-12 col-md-2 col-12">-->
+                <aside class="col-12 col-lg-2 my-4">
+                    <nav class="collapse d-lg-block">
                         <header>
                             <h3 class="badge badge-dark">{% block headingA %}{% endblock headingA %}</h3>
                             <p><a href="http://localhost:5000" class="badge badge-primary">Pagina principal</a><br>
@@ -27,6 +32,9 @@
                         
                             {% block navegacion %}
                             {% endblock navegacion %}
+                            <hr class="my-4">
+                            {% block buscador %}
+                            {% endblock buscador %}
                     </nav>
                     <!--
                     <p>
@@ -42,13 +50,14 @@
                     <!--<div class="collapse multi-collapse" id="multiCollapseExample">-->
                     <!--<button aria-controls="nav" aria-expanded="false" class="btn btn-sm collapsed d-md-none" data-target="aside > span" data-toggle="collapse">Menu</button>-->
                     <hr class="my-4">
-                    <button aria-controls="nav" aria-expanded="false" class="btn btn-primary collapsed d-md-none" data-target="aside > nav" data-toggle="collapse">Menu</button>
-                    {% block buscador %}
-                    {% endblock buscador %}
+                    <button aria-controls="nav" aria-expanded="false" class="btn btn-primary collapsed d-lg-none" data-target="aside > nav" data-toggle="collapse">Menu</button>
+                    
                    
                 </aside>
 
-                <main class="col-sm-12 col-md-7 col-12">
+                <!--<main class="col-sm-12 col-md-7 col-12">-->
+                <main class="col-12 col-lg-7 my-2">
+                    
                     <h1>
                         {% block headingM %}{% endblock headingM %}
                     </h1>
@@ -57,7 +66,8 @@
                     {% endblock body %}
                     
                 </main>
-                <div class="col-sm-12 col-md-3 col-12 mx-auto">
+                <!--<div class="col-sm-12 col-md-3 col-12 mx-auto">-->
+                <div class="col-12 col-lg-3 my-4">
                     {% block leftContent %}
                     {% endblock leftContent %}
                     <div class="fixed-bottom right"><span class="badge badge-dark">Hecho por Alberto @2019</span></div>
@@ -66,9 +76,7 @@
             </div>
         </div>
         <!--<h6 id="pieDerecho">Hecho por Alberto @2019</h6>-->
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-        <script type=text/javascript src="{{url_for('static', filename='js/paginacion.js') }}"></script>
+        {% block alFondo %}
+        {% endblock alFondo %}
     </body>
 </html>
