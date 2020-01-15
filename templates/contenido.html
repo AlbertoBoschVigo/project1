@@ -51,12 +51,21 @@
         {% endfor %}
     </tbody>
 </table>
-<p> Aqui puedes ver resultados de la categoria {{ headline }}</p>
+<div class="textillo">
+    <p> Aqui puedes ver resultados de la categoria {{ headline }}</p>
+    {% if estadoLogin %}
+        <p>Dale a las <i class="fa fa-hand-o-right"></i> para ver los detalles del libro.</p>
+    {% else %}
+        <p>Logueate para ver los detalles del libro y dejar tu opinion.</p>
+    {% endif %}
+    <p>Animate a buscar, hay multiples opciones.</p>
+</div>
+
 {% endblock body %}
 
 {% block leftContent %}
     {% if estadoLogin %}
-        <div class="card" style="font-size: 0.8rem;">
+        <div class="card my-5" style="font-size: 0.8rem;">
             <div class="card-body">
                 <h5 class="card-title">Bienvenido {{ estadoLogin }}</h5>
                 

@@ -14,7 +14,7 @@
     <body>
         <div class="container-fluid">
             <div class="row justify-content-start">
-                <aside class="col-sm-2 col-md-2">
+                <aside class="col-sm-12 col-md-2 col-12">
                     <nav class="collapse d-md-block">
                         <header>
                             <h3 class="badge badge-dark">{% block headingA %}{% endblock headingA %}</h3>
@@ -48,17 +48,16 @@
                    
                 </aside>
 
-                <main class="col-sm-7 col-md-7">
+                <main class="col-sm-12 col-md-7 col-12">
                     <h1>
                         {% block headingM %}{% endblock headingM %}
                     </h1>
                        
                     {% block body %}
                     {% endblock body %}
-
                     
                 </main>
-                <div class="col-sm-3 col-md-3 col-lg-3 mx-auto">
+                <div class="col-sm-12 col-md-3 col-12 mx-auto">
                     {% block leftContent %}
                     {% endblock leftContent %}
                     <div class="fixed-bottom right"><span class="badge badge-dark">Hecho por Alberto @2019</span></div>

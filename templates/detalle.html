@@ -13,7 +13,12 @@
 
         // Send request
         request.send(data);
-        location.reload();
+        //location.reload();
+        request.onreadystatechange = function(){
+            if (this.readyState==4 && this.status==200){
+                location.reload();
+            }
+        };
     };
     $('#exampleModal').on('shown.bs.modal', function() {
         $('#message-text').focus();

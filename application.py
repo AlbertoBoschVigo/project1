@@ -101,7 +101,22 @@ def index():
     else:
         resultado = generarTabla(modo = 'index', filas = 5, buscar = session['cadenaBusqueda'], columna = session['eleccion'])
         session.pop('cadenaBusqueda', None)
-    return render_template('index.html', headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'], numPaginas = numPaginas)
+    #print(session.get('nuevoUsuario'))
+    #print(session.get('nuevoNuevoUsuario'))
+    #print('#################')
+    if session.get('nuevoUsuario'):
+        if session.get('nuevoNuevoUsuario') and session.get('nuevoNuevoNuevoUsuario'):
+            session.pop('nuevoUsuario', None)
+            session.pop('nuevoNuevoUsuario', None)
+            session.pop('nuevoNuevoNuevoUsuario', None)
+        else:
+            session['nuevoNuevoUsuario'] = True
+    nuevoUsuario = session.get('nuevoUsuario')
+    nuevoNuevoUsuario = session.get('nuevoNuevoUsuario')
+    #print(nuevoUsuario)
+    #nuevoUsuario = True
+    
+    return render_template('index.html', headline = headline, listaCategorias = listaCategorias, resultado = resultado, estadoLogin = session['user_id'], numPaginas = numPaginas, nuevoUsuario = [nuevoNuevoUsuario, nuevoUsuario])
 
 @app.route("/<string:categoria>")
 def contenido(categoria):
@@ -130,7 +145,9 @@ def login():
             session['user_id'] = request.form['email']
             session['user_pass'] = request.form['userPassword']
             insertarUsuario(session['user_id'], session['user_pass'])
-            comprobarUsuario()
+            session['nuevoUsuario'] = session['user_id']
+            session['logueado'] = False
+            session['user_id'] = False
         return redirect(url_for('index')) 
     else:
         if session['logueado']:
@@ -148,6 +165,9 @@ def detalle(isbn):
         return render_template('default_error.html', headline = 'Acceso no autorizado')
     else:
         if request.method == 'POST':
+            print(isbn)
+            isbn = request.form['isbn']
+            print(isbn)
             insertarOpinion(request.form['isbn'], session['user_id'], request.form['opinion'])
             #return redirect(url_for('detalle', isbn = request.form['isbn']))
         if True:

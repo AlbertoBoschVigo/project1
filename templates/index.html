@@ -5,6 +5,7 @@
         const request = new XMLHttpRequest();
         const email = document.querySelector('#inputEmail').value;
         const userPassword = document.querySelector('#inputPassword').value;
+        var referencia = 0;
         request.open('POST', `/login`);
         const data = new FormData();
         data.append('email', email);
@@ -12,7 +13,18 @@
 
         // Send request
         request.send(data);
-        location.reload();
+        //location.reload();
+        request.onreadystatechange = function(){
+            console.log(this.status)
+            console.log(this.readyState)
+            if (this.readyState==4 && this.status==200 && referencia == 0){
+                //location.reload();
+                //request.open('GET', `/`)
+                //request.send()
+                referencia = 1;
+                location.reload();
+            }
+        };
     };
 </script>
 {% endblock head %}
@@ -75,16 +87,20 @@
       <li class="page-item"><a class="page-link"  href="#" onclick="funcPaginar(this)">Next</a></li>
     </ul>
   </nav>
-    
 
-
-    <p>Aqui puedes ver algunos de los titulos disponibles.</p>
+  <div class="textillo">
+    {% if estadoLogin %}
+        <p>Dale a las <i class="fa fa-hand-o-right"></i> para ver los detalles del libro.</p>
+    {% else %}
+        <p>Logueate para ver los detalles del libro y dejar tu opinion.</p>
+    {% endif %}
     <p>Animate a buscar, hay multiples opciones.</p>
+  </div>
 {% endblock body %}
 
 {% block leftContent %}
     {% if estadoLogin %}
-        <div class="card" style="font-size: 0.8rem;">
+        <div class="card my-5" style="font-size: 0.8rem;">
             <div class="card-body">
                 <h5 class="card-title">Bienvenido {{ estadoLogin }}</h5>
                 
@@ -94,5 +110,17 @@
         </div> 
     {% else %}
         {% include 'miniLogin.html' %}
+        {% if nuevoUsuario[0] %}
+            <div class="textillo">
+                <p>Cuenta {{ nuevoUsuario[1] }} registrada correctamente.</p>
+                <p>Logueate si quieres ver mas detalles o dejar comentarios.</p>
+            </div>
+        {% else %}
+            <div class="textillo">
+                <p>Logueate si quieres ver mas detalles o dejar comentarios.</p>
+                <p>Si no estas registrado, pon un email y una contraseña y dale a "REGISTRARSE".</p>
+            </div>
+        {% endif %}
     {% endif %}
+    
 {% endblock leftContent %}

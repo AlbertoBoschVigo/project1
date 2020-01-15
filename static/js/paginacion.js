@@ -69,7 +69,8 @@ function selectorVisibilidad(){
     var nietos;
     for (i=0; i<hijos.length; i++){
         if(i+1 > inicioTr && i+1 <= finTr){
-            hijos[i].style.display = 'block';
+            //hijos[i].style.display = 'block';
+            hijos[i].style.display = 'table-row';
             /*nietos = hijos[i].children;
             for (j=0; j<hijos.length; j++){
                 nietos[j].style.display = 'block';
