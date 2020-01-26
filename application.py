@@ -194,11 +194,15 @@ def detalle(isbn):
 
 @app.route('/api/<string:isbn>')
 def api(isbn):
+    [(10020, '000723368X', 'Thanks for the Memories', 'Cecelia Ahern', 2008, 'fantasia')]
     if re.search('\d{8}', isbn):
-        return render_template('default_error.html', headline = 'Isbn valido')
+        resultado = generarTabla('isbn', 1, isbn)
+        if not resultado:
+            return render_template('default_error.html', headline = 'Isbn no encontrado')
+        return jsonify({'isbn':resultado[0][1], 'titulo':resultado[0][2], 'autor':resultado[0][3], 'fecha publicacion':resultado[0][4], 'genero':resultado[0][5]})
     else:
         return render_template('default_error.html', headline = 'Isbn no valido')
-    return render_template('default_error.html', headline = 'Isbn no encontrado')
+    
 
 @app.route('/buscar', methods = ['POST'])
 def buscar():
